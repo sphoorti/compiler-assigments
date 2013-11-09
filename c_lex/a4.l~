@@ -1,0 +1,124 @@
+/* */
+%{
+#include<stdio.h>
+
+struct symtab
+{
+	int id;	
+	char sym[10];
+		
+};
+
+struct symtab s[10];
+
+struct errortab
+{
+	int id;
+	int line;
+	
+};
+
+struct errortab e[10];
+
+int sym_no=0;	//number of entries in symbol table
+int eno=0;     //number of entries in error table
+
+void add_sym(char *);
+void display();
+void add_error();
+void display_error();
+int i=0;
+int line_no=0;
+%}
+Alphabet [a-zA-Z]
+Digit	 [0-9]
+
+%%
+"int"|"float"|"char"|"double"|"long"			{printf("\n%s - KEYWORD",yytext);}
+"sizeof"|"return"|"enum"|"union"|"struct"|"main"	{printf("\n%s - KEYWORD",yytext);}		       
+^#{Alphabet}+	       				        {printf("\n%s - PREPROCESSOR",yytext);}
+{Alphabet}+".h"	      					{printf("\n%s - HEADER",yytext);}
+[ \t]+							;
+{Alphabet}({Alphabet}|{Digit})*				{printf("\n%s - IDENTIFIER",yytext);add_sym(yytext);}
+"?"|":"|";"|"&&"|"||"|"&"|"|"|"^"|","			{printf("\n%s - SPECIAL SYMBOL",yytext);}
+"+"|"-"|"*"|"/"|"%"					{printf("\n%s - ARITHMETIC OPERATOR",yytext);}
+"="							{printf("\n%s - ASSIGNMENT OPERATOR",yytext);}
+"<"|"<="|">"|">="|"=="|"!="				{printf("\n%s - RELATIONAL OPERATOR",yytext);}
+{Digit}+						{printf("\n%s - NUMBER",yytext);}
+. 							;
+[\n]+							{line_no++;}
+
+"/*"(.|[\n])*"*/"					{printf("\n MULTILINE COMMENT");}
+"/*"(.[^"*/"]|[\n])*					{printf("\n UNTERMINATED COMMENT");add_error();}
+"\""(.[^"\""]|[\n])*					{printf("\n UNTERMINATED STRING");add_error();}			
+
+%%
+int main()
+{
+	FILE *fp;
+
+	fp=fopen("input.txt","r");
+
+	yyin=fp;
+
+	yylex();
+
+	display();
+	display_error();
+}
+
+void add_error()
+{
+	e[eno].id=eno+1;
+	e[eno].line=line_no;
+
+	eno++;
+
+	
+}
+
+void add_sym(char symbol[10])
+{
+		
+	for(i=0;i<sym_no;i++)
+		{
+			if(strcmp(symbol,s[i].sym)==0)
+				return;
+		}
+	
+		
+	strcpy(s[sym_no].sym,symbol);
+	s[sym_no].id=sym_no+1;
+
+	sym_no++;
+
+}
+
+void display_error()
+{
+	int i=0;
+
+	printf("\nID\tERROR");
+	for(i=0;i<eno;i++)
+	{
+		printf("\n%d\t%d",e[i].id,e[i].line);
+	}
+
+}
+
+void display()
+{
+	int i=0;
+
+	printf("\nID\tSYMBOL");
+	for(i=0;i<sym_no;i++)
+	{
+		printf("\n%d\t%s",s[i].id,s[i].sym);
+	}
+}
+
+int yywrap()
+{
+	return 1;
+}
+

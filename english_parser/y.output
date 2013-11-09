@@ -1,0 +1,106 @@
+   0  $accept : sentence $end
+
+   1  sentence : simple
+   2           | compound
+
+   3  simple : subject Verb object
+
+   4  compound : simple Conj simple
+
+   5  subject : Noun
+   6          | Pronoun
+
+   7  object : Noun
+
+state 0
+	$accept : . sentence $end  (0)
+
+	Noun  shift 1
+	Pronoun  shift 2
+	.  error
+
+	sentence  goto 3
+	simple  goto 4
+	compound  goto 5
+	subject  goto 6
+
+
+state 1
+	subject : Noun .  (5)
+
+	.  reduce 5
+
+
+state 2
+	subject : Pronoun .  (6)
+
+	.  reduce 6
+
+
+state 3
+	$accept : sentence . $end  (0)
+
+	$end  accept
+
+
+state 4
+	sentence : simple .  (1)
+	compound : simple . Conj simple  (4)
+
+	Conj  shift 7
+	$end  reduce 1
+
+
+state 5
+	sentence : compound .  (2)
+
+	.  reduce 2
+
+
+state 6
+	simple : subject . Verb object  (3)
+
+	Verb  shift 8
+	.  error
+
+
+state 7
+	compound : simple Conj . simple  (4)
+
+	Noun  shift 1
+	Pronoun  shift 2
+	.  error
+
+	simple  goto 9
+	subject  goto 6
+
+
+state 8
+	simple : subject Verb . object  (3)
+
+	Noun  shift 10
+	.  error
+
+	object  goto 11
+
+
+state 9
+	compound : simple Conj simple .  (4)
+
+	.  reduce 4
+
+
+state 10
+	object : Noun .  (7)
+
+	.  reduce 7
+
+
+state 11
+	simple : subject Verb object .  (3)
+
+	.  reduce 3
+
+
+7 terminals, 6 nonterminals
+8 grammar rules, 12 states

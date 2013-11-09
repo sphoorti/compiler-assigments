@@ -1,0 +1,46 @@
+%{
+#include<stdio.h>
+#include<stdlib.h>
+#include"y.tab.h"
+int line_no=0;
+
+%}
+
+%%
+
+main\(\)	{return (MAIN);}
+int	{return (INT);}
+float	{return (FLOAT);}
+char	{return (CHAR);}
+
+if {return (IF);}
+else {return (ELSE);}
+
+[0-9]+	{strcpy(yylval.arg,yytext);
+	 return(NUMBER);	
+	}
+
+[a-zA-Z][_a-zA-Z0-9]*	{strcpy(yylval.arg,yytext);
+	 		  return(VARIABLE);	
+			}
+
+\<= |
+\>= |
+\<  |
+\>  |
+==			{strcpy(yylval.arg,yytext);
+	 		  return(RELOP);	
+			}
+
+"\n"	{++line_no;}
+[ \t]  ;
+
+.          		{return(yytext[0]);}  
+
+
+%%
+
+int yywrap()
+{
+return (1);
+}

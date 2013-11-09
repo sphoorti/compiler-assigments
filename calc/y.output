@@ -1,0 +1,467 @@
+   0  $accept : Statement $end
+
+   1  Statement : E '\n'
+   2            | Statement E '\n'
+   3            | MEM '=' E '\n'
+   4            | Statement MEM '=' E '\n'
+   5            | Statement CLEAR '\n'
+
+   6  E : E '+' E
+   7    | E '-' E
+   8    | E '*' E
+   9    | E '/' E
+  10    | '(' E ')'
+  11    | '-' E
+  12    | SIN E
+  13    | COS E
+  14    | TAN E
+  15    | NUMBER
+  16    | MEM
+
+state 0
+	$accept : . Statement $end  (0)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 5
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	Statement  goto 8
+	E  goto 9
+
+
+state 1
+	E : SIN . E  (12)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 11
+
+
+state 2
+	E : COS . E  (13)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 12
+
+
+state 3
+	E : TAN . E  (14)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 13
+
+
+state 4
+	E : NUMBER .  (15)
+
+	.  reduce 15
+
+
+state 5
+	Statement : MEM . '=' E '\n'  (3)
+	E : MEM .  (16)
+
+	'='  shift 14
+	'-'  reduce 16
+	'+'  reduce 16
+	'*'  reduce 16
+	'/'  reduce 16
+	'\n'  reduce 16
+
+
+state 6
+	E : '-' . E  (11)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 15
+
+
+state 7
+	E : '(' . E ')'  (10)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 16
+
+
+state 8
+	$accept : Statement . $end  (0)
+	Statement : Statement . E '\n'  (2)
+	Statement : Statement . MEM '=' E '\n'  (4)
+	Statement : Statement . CLEAR '\n'  (5)
+
+	$end  accept
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	CLEAR  shift 17
+	NUMBER  shift 4
+	MEM  shift 18
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 19
+
+
+state 9
+	Statement : E . '\n'  (1)
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'-'  shift 20
+	'+'  shift 21
+	'*'  shift 22
+	'/'  shift 23
+	'\n'  shift 24
+	.  error
+
+
+state 10
+	E : MEM .  (16)
+
+	.  reduce 16
+
+
+state 11
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : SIN E .  (12)
+
+	.  reduce 12
+
+
+state 12
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : COS E .  (13)
+
+	.  reduce 13
+
+
+state 13
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : TAN E .  (14)
+
+	.  reduce 14
+
+
+state 14
+	Statement : MEM '=' . E '\n'  (3)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 25
+
+
+state 15
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : '-' E .  (11)
+
+	.  reduce 11
+
+
+state 16
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : '(' E . ')'  (10)
+
+	'-'  shift 20
+	'+'  shift 21
+	'*'  shift 22
+	'/'  shift 23
+	')'  shift 26
+	.  error
+
+
+state 17
+	Statement : Statement CLEAR . '\n'  (5)
+
+	'\n'  shift 27
+	.  error
+
+
+state 18
+	Statement : Statement MEM . '=' E '\n'  (4)
+	E : MEM .  (16)
+
+	'='  shift 28
+	'-'  reduce 16
+	'+'  reduce 16
+	'*'  reduce 16
+	'/'  reduce 16
+	'\n'  reduce 16
+
+
+state 19
+	Statement : Statement E . '\n'  (2)
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'-'  shift 20
+	'+'  shift 21
+	'*'  shift 22
+	'/'  shift 23
+	'\n'  shift 29
+	.  error
+
+
+state 20
+	E : E '-' . E  (7)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 30
+
+
+state 21
+	E : E '+' . E  (6)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 31
+
+
+state 22
+	E : E '*' . E  (8)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 32
+
+
+state 23
+	E : E '/' . E  (9)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 33
+
+
+state 24
+	Statement : E '\n' .  (1)
+
+	.  reduce 1
+
+
+state 25
+	Statement : MEM '=' E . '\n'  (3)
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'-'  shift 20
+	'+'  shift 21
+	'*'  shift 22
+	'/'  shift 23
+	'\n'  shift 34
+	.  error
+
+
+state 26
+	E : '(' E ')' .  (10)
+
+	.  reduce 10
+
+
+state 27
+	Statement : Statement CLEAR '\n' .  (5)
+
+	.  reduce 5
+
+
+state 28
+	Statement : Statement MEM '=' . E '\n'  (4)
+
+	SIN  shift 1
+	COS  shift 2
+	TAN  shift 3
+	NUMBER  shift 4
+	MEM  shift 10
+	'-'  shift 6
+	'('  shift 7
+	.  error
+
+	E  goto 35
+
+
+state 29
+	Statement : Statement E '\n' .  (2)
+
+	.  reduce 2
+
+
+state 30
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E '-' E .  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'*'  shift 22
+	'/'  shift 23
+	'-'  reduce 7
+	'+'  reduce 7
+	'\n'  reduce 7
+	')'  reduce 7
+
+
+state 31
+	E : E . '+' E  (6)
+	E : E '+' E .  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'*'  shift 22
+	'/'  shift 23
+	'-'  reduce 6
+	'+'  reduce 6
+	'\n'  reduce 6
+	')'  reduce 6
+
+
+state 32
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E '*' E .  (8)
+	E : E . '/' E  (9)
+
+	.  reduce 8
+
+
+state 33
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+	E : E '/' E .  (9)
+
+	.  reduce 9
+
+
+state 34
+	Statement : MEM '=' E '\n' .  (3)
+
+	.  reduce 3
+
+
+state 35
+	Statement : Statement MEM '=' E . '\n'  (4)
+	E : E . '+' E  (6)
+	E : E . '-' E  (7)
+	E : E . '*' E  (8)
+	E : E . '/' E  (9)
+
+	'-'  shift 20
+	'+'  shift 21
+	'*'  shift 22
+	'/'  shift 23
+	'\n'  shift 36
+	.  error
+
+
+state 36
+	Statement : Statement MEM '=' E '\n' .  (4)
+
+	.  reduce 4
+
+
+18 terminals, 3 nonterminals
+17 grammar rules, 37 states

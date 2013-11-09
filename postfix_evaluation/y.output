@@ -1,0 +1,199 @@
+   0  $accept : S $end
+
+   1  S : E
+
+   2  E : E '+' E
+   3    | E '*' E
+   4    | E '-' E
+   5    | E '/' E
+   6    | '(' E ')'
+   7    | '-' E
+   8    | NUM
+
+state 0
+	$accept : . S $end  (0)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	S  goto 4
+	E  goto 5
+
+
+state 1
+	E : NUM .  (8)
+
+	.  reduce 8
+
+
+state 2
+	E : '-' . E  (7)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 6
+
+
+state 3
+	E : '(' . E ')'  (6)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 7
+
+
+state 4
+	$accept : S . $end  (0)
+
+	$end  accept
+
+
+state 5
+	S : E .  (1)
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+
+	'+'  shift 8
+	'-'  shift 9
+	'*'  shift 10
+	'/'  shift 11
+	$end  reduce 1
+
+
+state 6
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+	E : '-' E .  (7)
+
+	.  reduce 7
+
+
+state 7
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+	E : '(' E . ')'  (6)
+
+	'+'  shift 8
+	'-'  shift 9
+	'*'  shift 10
+	'/'  shift 11
+	')'  shift 12
+	.  error
+
+
+state 8
+	E : E '+' . E  (2)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 13
+
+
+state 9
+	E : E '-' . E  (4)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 14
+
+
+state 10
+	E : E '*' . E  (3)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 15
+
+
+state 11
+	E : E '/' . E  (5)
+
+	NUM  shift 1
+	'-'  shift 2
+	'('  shift 3
+	.  error
+
+	E  goto 16
+
+
+state 12
+	E : '(' E ')' .  (6)
+
+	.  reduce 6
+
+
+state 13
+	E : E . '+' E  (2)
+	E : E '+' E .  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+
+	'*'  shift 10
+	'/'  shift 11
+	$end  reduce 2
+	'+'  reduce 2
+	'-'  reduce 2
+	')'  reduce 2
+
+
+state 14
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E '-' E .  (4)
+	E : E . '/' E  (5)
+
+	'*'  shift 10
+	'/'  shift 11
+	$end  reduce 4
+	'+'  reduce 4
+	'-'  reduce 4
+	')'  reduce 4
+
+
+state 15
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E '*' E .  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+
+	.  reduce 3
+
+
+state 16
+	E : E . '+' E  (2)
+	E : E . '*' E  (3)
+	E : E . '-' E  (4)
+	E : E . '/' E  (5)
+	E : E '/' E .  (5)
+
+	.  reduce 5
+
+
+10 terminals, 3 nonterminals
+9 grammar rules, 17 states

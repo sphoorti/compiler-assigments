@@ -1,0 +1,17 @@
+#include<stdio.h>
+
+int main()
+{
+
+int a,bb,abb;
+float b;
+char ab;
+"
+//hello 
+//world
+
+
+
+
+return 0;
+}
